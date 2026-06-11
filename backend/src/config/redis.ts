@@ -9,7 +9,7 @@ export const redisClient = createClient({
   url: env.REDIS_URL,
 });
 
-redisClient.on('error', (err) => {
+redisClient.on('error', (err: Error) => {
   // Ignore endless reconnect errors to prevent log spam
 });
 

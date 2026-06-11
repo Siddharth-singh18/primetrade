@@ -1,18 +1,27 @@
-import app from './app';
-import { env } from './config/env';
-import { logger } from './utils/logger';
-import { connectDB } from './config/db';
-import { connectRedis } from './config/redis';
+import app from "./app";
+import mongoose from "mongoose";
+import { redisClient } from "./config/redis";
+
+const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
-  await connectDB();
-  await connectRedis();
+  try {
+    console.log("Starting server...");
 
-  const PORT = env.PORT || 5000;
+    await mongoose.connect(process.env.MONGODB_URI!);
+    console.log("MongoDB Connected");
 
-  app.listen(PORT, () => {
-    logger.info(`Server running in ${env.NODE_ENV} mode on port ${PORT}`);
-  });
+    // await redisClient.connect();
+    // console.log("Redis Connected");
+
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+
+  } catch (error) {
+    console.error("Server startup error:", error);
+    process.exit(1);
+  }
 };
 
 startServer();

@@ -4,10 +4,7 @@ import { ApiError } from '../utils/ApiError';
 import { cache } from '../config/redis';
 
 export interface AuthRequest extends Request {
-  user?: {
-    userId: string;
-    role: string;
-  };
+  user?: any;
 }
 
 export const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {

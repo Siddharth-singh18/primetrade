@@ -1,0 +1,207 @@
+openapi: 3.0.0
+info:
+  title: TaskFlow API
+  description: API documentation for the TaskFlow application
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Development server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      tags: [Auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '201':
+          description: User registered successfully
+        '400':
+          description: Validation error
+        '409':
+          description: User already exists
+  /auth/login:
+    post:
+      summary: Login
+      tags: [Auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login successful
+        '401':
+          description: Invalid credentials
+  /auth/refresh:
+    post:
+      summary: Refresh access token
+      tags: [Auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: Token refreshed
+        '401':
+          description: Invalid refresh token
+  /auth/logout:
+    post:
+      summary: Logout
+      tags: [Auth]
+      responses:
+        '200':
+          description: Logged out successfully
+  /tasks:
+    get:
+      summary: Get user's tasks
+      tags: [Tasks]
+      responses:
+        '200':
+          description: A list of tasks
+    post:
+      summary: Create a new task
+      tags: [Tasks]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title]
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                status:
+                  type: string
+                  enum: [todo, in-progress, done]
+                priority:
+                  type: string
+                  enum: [low, medium, high]
+                dueDate:
+                  type: string
+                  format: date-time
+      responses:
+        '201':
+          description: Task created successfully
+  /tasks/{id}:
+    put:
+      summary: Update a task
+      tags: [Tasks]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                status:
+                  type: string
+                  enum: [todo, in-progress, done]
+                priority:
+                  type: string
+                  enum: [low, medium, high]
+                dueDate:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: Task updated successfully
+    delete:
+      summary: Delete a task
+      tags: [Tasks]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task deleted successfully
+  /admin/users:
+    get:
+      summary: Get all users
+      tags: [Admin]
+      responses:
+        '200':
+          description: A list of users
+  /admin/tasks:
+    get:
+      summary: Get all tasks across all users
+      tags: [Admin]
+      responses:
+        '200':
+          description: A list of all tasks
+  /admin/users/{id}/role:
+    patch:
+      summary: Update user role
+      tags: [Admin]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [role]
+              properties:
+                role:
+                  type: string
+                  enum: [user, admin]
+      responses:
+        '200':
+          description: Role updated successfully
